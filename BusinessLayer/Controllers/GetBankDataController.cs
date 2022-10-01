@@ -15,9 +15,9 @@ namespace BusinessLayer.Controllers
     {
         RestClient restClient = new RestClient("http://localhost:53746/");
         [ResponseType(typeof(BankData))]
-        public IHttpActionResult AddData(int id)
+        public IHttpActionResult GetBankData(int id)
         {
-            RestRequest request = new RestRequest("api/putbankdata/{id}", Method.Get);
+            RestRequest request = new RestRequest("api/getbankdata/{id}", Method.Get);
             request.AddParameter("id", id);
             RestResponse response = restClient.Execute(request);
             return Ok(response);
