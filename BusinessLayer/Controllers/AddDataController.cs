@@ -7,19 +7,24 @@ using System.Net.Http;
 using System.Web.Http;
 using RestSharp;
 using Newtonsoft.Json;
+using BusinessLayer.Models;
 
 namespace BusinessLayer.Controllers
 {
     public class AddDataController : ApiController
     {
-        RestClient restClient = new RestClient("http://localhost:53746/");
+        Access access = new Access();
         public IHttpActionResult AddData(int id, BankData bankData)
         {
-            RestRequest request = new RestRequest("api/putbankdata/{id}", Method.Put);
+            RestRequest request = new RestRequest("api/bankdata/{id}", Method.Put);
             request.AddParameter("id", id);
             request.AddJsonBody(JsonConvert.SerializeObject(bankData));
-            RestResponse response = restClient.Execute(request);
-            return Ok(response);
+            RestResponse response = access.restClient.Execute(request);
+            if (response.Content != null)
+            {
+                return Ok(response.Content);
+            }
+            return BadRequest();
         }
 
     }

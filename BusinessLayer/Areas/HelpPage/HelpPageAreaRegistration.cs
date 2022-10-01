@@ -16,9 +16,10 @@ namespace BusinessLayer.Areas.HelpPage
         public override void RegisterArea(AreaRegistrationContext context)
         {
             context.MapRoute(
-                "HelpPage_Default",
+                "HelpPage",
                 "Help/{action}/{apiId}",
-                new { controller = "Help", action = "Index", apiId = UrlParameter.Optional });
+                new { controller = "Help", action = "Index", apiId = UrlParameter.Optional },
+                namespaces: new[] { "BankWebAPI.BusinessLayer.WebMvc.Controllers" });
 
             HelpPageConfig.Register(GlobalConfiguration.Configuration);
         }

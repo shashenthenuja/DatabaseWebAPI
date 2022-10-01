@@ -4,28 +4,32 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using System.Web.Http.Description;
 
 namespace BusinessLayer.Controllers
 {
-    public class GetAllDataController : ApiController
+    public class SearchDataController : ApiController
     {
-
+        List<BankData> list = new List<BankData>();
         Access access = new Access();
-        [ResponseType(typeof(BankData))]
-        public IHttpActionResult GetAllData()
+        public IHttpActionResult SearchData(string name)
         {
+            
             RestRequest request = new RestRequest("api/bankdata/", Method.Get);
             RestResponse response = access.restClient.Execute(request);
-            if (response.Content != null)
+            DbSet<BankData> set = JsonConvert.DeserializeObject<DbSet<BankData>>(response.Content);
+            foreach (BankData item in set)
             {
-                return Ok(response.Content);
+                if (item.FirstName.Equals(name))
+                {
+                    list.Add(item);
+                }
             }
-            return BadRequest();
+            return Json(list);
         }
     }
 }

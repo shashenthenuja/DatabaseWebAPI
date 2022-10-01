@@ -8,24 +8,18 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using System.Web.Http.Description;
 
 namespace BusinessLayer.Controllers
 {
-    public class GetBankDataController : ApiController
+    public class DeleteDataController : ApiController
     {
         Access access = new Access();
-        [ResponseType(typeof(BankData))]
-        public IHttpActionResult GetBankData(int id)
+        public IHttpActionResult AddData(int id)
         {
-            RestRequest request = new RestRequest("api/bankdata/{id}", Method.Get);
+            RestRequest request = new RestRequest("api/bankdata/{id}", Method.Delete);
             request.AddParameter("id", id);
             RestResponse response = access.restClient.Execute(request);
-            if (response.Content != null)
-            {
-                return Ok(response.Content);
-            }
-            return BadRequest();
+            return Ok(response);
         }
     }
 }
