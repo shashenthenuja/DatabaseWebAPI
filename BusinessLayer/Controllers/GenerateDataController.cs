@@ -16,7 +16,7 @@ namespace BusinessLayer.Controllers
     {
         Access access = new Access();
         DatabaseClass data = new DatabaseClass();
-        public IHttpActionResult GenerateData(int index)
+        public IHttpActionResult GenerateData([FromUri] int index)
         {
             List<DataStruct> list = data.getList();
             int count = index;

@@ -46,8 +46,7 @@ namespace ClientGUI
             list = JsonConvert.DeserializeObject<List<BankData>>(numOfThings.Content);
             if (list.Count == 0)
             {
-                RestRequest request2 = new RestRequest("api/generatedata/{id}", Method.Get);
-                request2.AddParameter("id", 0);
+                RestRequest request2 = new RestRequest("api/generatedata/?index=1", Method.Post);
                 RestResponse restResponse = client.Execute(request2);
                 var data = (JObject)JsonConvert.DeserializeObject(restResponse.Content, new JsonSerializerSettings() { DateParseHandling = DateParseHandling.None });
                 var status = (string)data["Status"];
@@ -70,16 +69,16 @@ namespace ClientGUI
             bool isNumber = int.TryParse(IndexNum.Text, out int n);
             if (isNumber)
             {
-                index = Int32.Parse(IndexNum.Text);
-                int length = list.Count;
-                if (index > 0 && index <= length)
+                try
                 {
-                    try
-                    {
-                        RestRequest request = new RestRequest("api/getalldata");
-                        RestResponse resp = client.Get(request);
-                        List<BankData> data = JsonConvert.DeserializeObject<List<BankData>>(resp.Content);
+                    RestRequest request = new RestRequest("api/getalldata");
+                    RestResponse resp = client.Get(request);
+                    List<BankData> data = JsonConvert.DeserializeObject<List<BankData>>(resp.Content);
 
+                    index = Int32.Parse(IndexNum.Text);
+                    int length = data.Count;
+                    if (index > 0 && index <= length)
+                    {
                         foreach (BankData item in data)
                         {
                             if (item.Id.Equals(index))
@@ -96,13 +95,12 @@ namespace ClientGUI
                             }
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message + " Invalid URL!");
-                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message + " Invalid URL!");
                 }
             }
-
         }
 
         private async void findBtn_Click(object sender, RoutedEventArgs e)
@@ -205,14 +203,24 @@ namespace ClientGUI
         private void insertBtn_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog op;
-            if (FNameBox.Text != null && LNameBox.Text != null && BalanceBox.Text != null && AcctNoBox.Text != null && PinBox.Text != null)
+            if (!FNameBox.Text.Equals("") && !LNameBox.Text.Equals("") && !BalanceBox.Text.Equals("") && !AcctNoBox.Text.Equals("") && !PinBox.Text.Equals(""))
             {
                 string fname = FNameBox.Text;
                 string lname = LNameBox.Text;
-                int accNo = Int32.Parse(AcctNoBox.Text);
-                int pin = Int32.Parse(PinBox.Text);
-                int balance = Int32.Parse(PinBox.Text);
-
+                int accNo = 0;
+                int pin = 0;
+                int balance = 0;
+                try
+                {
+                    accNo = Int32.Parse(AcctNoBox.Text);
+                    pin = Int32.Parse(PinBox.Text);
+                    balance = Int32.Parse(PinBox.Text);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Enter valid data!");
+                }
+                
                 op = new OpenFileDialog();
                 op.Title = "Select a profile picture";
                 op.Filter = "JPG Files (*.jpg)|*.jpg|JPEG Files (*.jpeg)|*.jpeg|PNG Files (*.png)|*.png|GIF Files (*.gif)|*.gif";
@@ -222,9 +230,9 @@ namespace ClientGUI
                     RestRequest request = new RestRequest("api/getalldata");
                     RestResponse resp = client.Get(request);
                     List<BankData> data = JsonConvert.DeserializeObject<List<BankData>>(resp.Content);
-                    int index = data.Count - 1;
+                    int index = data.Count + 1 ;
                     BankData bankData = new BankData();
-                    bankData.Id = index + 1;
+                    bankData.Id = index;
                     bankData.FirstName = fname;
                     bankData.LastName = lname;
                     bankData.AccNum = accNo;
@@ -232,13 +240,13 @@ namespace ClientGUI
                     bankData.Balance = balance;
                     bankData.Image = op.FileName;
                    
-                    //RestClient client2 = new RestClient("http://localhost:53746/");
                     RestRequest restRequest = new RestRequest("api/adddata", Method.Post);
                     restRequest.AddJsonBody(JsonConvert.SerializeObject(bankData));
                     RestResponse restResponse = client.Execute(restRequest);
                     BankData returnStudent = JsonConvert.DeserializeObject<BankData>(restResponse.Content);
                     if (returnStudent != null)
                     {
+                        TotalNum.Text = "Total Records : " + index.ToString();
                         MessageBox.Show("Data Successfully Inserted");
                     }
                     else
