@@ -232,6 +232,7 @@ namespace ClientGUI
                     bankData.Balance = balance;
                     bankData.Image = op.FileName;
                    
+                    //RestClient client2 = new RestClient("http://localhost:53746/");
                     RestRequest restRequest = new RestRequest("api/adddata", Method.Post);
                     restRequest.AddJsonBody(JsonConvert.SerializeObject(bankData));
                     RestResponse restResponse = client.Execute(restRequest);

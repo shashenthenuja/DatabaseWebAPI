@@ -14,17 +14,17 @@ namespace BusinessLayer.Controllers
     public class AddDataController : ApiController
     {
         Access access = new Access();
-        public IHttpActionResult AddData(int id, BankData bankData)
+        public IHttpActionResult AddData([FromBody]BankData bankData)
         {
-            RestRequest request = new RestRequest("api/bankdata/", Method.Post);
-            request.AddJsonBody(JsonConvert.SerializeObject(bankData));
-            RestResponse response = access.restClient.Execute(request);
-            if (response.Content != null)
+            RestRequest restRequest = new RestRequest("api/bankdata", Method.Post);
+            restRequest.AddJsonBody(JsonConvert.SerializeObject(bankData));
+            RestResponse restResponse = access.restClient.Execute(restRequest);
+            BankData result = JsonConvert.DeserializeObject<BankData>(restResponse.Content);
+            if (result != null)
             {
-                return Ok(response.Content);
+                return Json(result);
             }
             return StatusCode(HttpStatusCode.NoContent);
         }
-
     }
 }
