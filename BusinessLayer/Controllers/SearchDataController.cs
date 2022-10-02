@@ -14,22 +14,27 @@ namespace BusinessLayer.Controllers
 {
     public class SearchDataController : ApiController
     {
-        List<BankData> list = new List<BankData>();
+        BankData result = new BankData();
         Access access = new Access();
         public IHttpActionResult SearchData(string name)
         {
-            
+
             RestRequest request = new RestRequest("api/bankdata/", Method.Get);
             RestResponse response = access.restClient.Execute(request);
-            DbSet<BankData> set = JsonConvert.DeserializeObject<DbSet<BankData>>(response.Content);
-            foreach (BankData item in set)
+            List<BankData> list = JsonConvert.DeserializeObject<List<BankData>>(response.Content);
+            foreach (BankData item in list)
             {
-                if (item.FirstName.Equals(name))
+                if (item.LastName.ToLower().Equals(name.ToLower()))
                 {
-                    list.Add(item);
+                    result = item;
+                    break;
                 }
             }
-            return Json(list);
+            if (result != null)
+            {
+                return Json(result);
+            }
+            return BadRequest();
         }
     }
 }

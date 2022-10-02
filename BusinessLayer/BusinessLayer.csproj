@@ -198,6 +198,7 @@
     <Compile Include="Controllers\GenerateDataController.cs" />
     <Compile Include="Controllers\GetAllDataController.cs" />
     <Compile Include="Controllers\GetBankDataController.cs" />
+    <Compile Include="Controllers\GetTotalController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\SearchDataController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />

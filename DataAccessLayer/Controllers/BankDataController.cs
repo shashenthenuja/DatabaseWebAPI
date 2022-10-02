@@ -17,9 +17,17 @@ namespace DataAccessLayer.Controllers
         private bankEntities db = new bankEntities();
 
         // GET: api/BankData
-        public IQueryable<BankData> GetBankDatas()
+        public List<BankData> GetBankDatas()
         {
-            return db.BankDatas;
+            List<BankData> bd = new List<BankData>();
+            if (db.BankDatas != null)
+            {
+                foreach (BankData item in db.BankDatas)
+                {
+                    bd.Add(item);
+                }
+            }
+            return bd;
         }
 
         // GET: api/BankData/5
@@ -27,6 +35,19 @@ namespace DataAccessLayer.Controllers
         public IHttpActionResult GetBankData(int id)
         {
             BankData bankData = db.BankDatas.Find(id);
+            if (bankData == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(bankData);
+        }
+
+        // GET: api/BankData/5
+        [ResponseType(typeof(BankData))]
+        public IHttpActionResult GetBankDataSearch(string name)
+        {
+            BankData bankData = db.BankDatas.Find(name);
             if (bankData == null)
             {
                 return NotFound();

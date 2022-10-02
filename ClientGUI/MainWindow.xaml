@@ -14,8 +14,12 @@
         <TextBox x:Name="PinBox" HorizontalAlignment="Center" Margin="0,188,0,0" TextWrapping="Wrap" Text="Pin" VerticalAlignment="Top" Width="120"/>
         <TextBox x:Name="BalanceBox" HorizontalAlignment="Center" Margin="0,227,0,0" TextWrapping="Wrap" Text="Balance" VerticalAlignment="Top" Width="120"/>
         <Separator HorizontalAlignment="Center" Margin="0,295,0,0" VerticalAlignment="Top" Height="34" Width="800"/>
-        <TextBox x:Name="IndexNum" HorizontalAlignment="Center" Margin="0,334,0,0" TextWrapping="Wrap" Text="Index?" VerticalAlignment="Top" Width="120"/>
-        <Button x:Name="goBtn" Content="Go!" HorizontalAlignment="Center" Margin="0,366,0,0" VerticalAlignment="Top" Width="84" Click="Button_Click"/>
-        <Button x:Name="insertBtn" Content="Insert" HorizontalAlignment="Center" Margin="0,275,0,0" VerticalAlignment="Top" Height="20" Width="50"/>
+        <TextBox x:Name="IndexNum" HorizontalAlignment="Left" Margin="238,327,0,0" TextWrapping="Wrap" Text="Index?" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="goBtn" Content="Go!" HorizontalAlignment="Left" Margin="238,361,0,0" VerticalAlignment="Top" Width="84" Click="Button_Click"/>
+        <TextBlock x:Name="TotalNum" HorizontalAlignment="Left" Margin="238,390,0,0" TextWrapping="Wrap" Text="Total Items" VerticalAlignment="Top"/>
+        <Button x:Name="insertBtn" Content="Insert" HorizontalAlignment="Center" Margin="0,275,0,0" VerticalAlignment="Top" Height="20" Width="50" Click="insertBtn_Click"/>
+        <TextBox x:Name="searchBox" HorizontalAlignment="Left" Margin="447,327,0,0" TextWrapping="Wrap" Text="Search" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="findBtn" Content="Find" HorizontalAlignment="Left" Margin="540,361,0,0" VerticalAlignment="Top" Click="findBtn_Click"/>
+        <ProgressBar x:Name="loadBar" HorizontalAlignment="Left" Height="10" Margin="434,366,0,0" VerticalAlignment="Top" Width="86" Visibility="Hidden"/>
     </Grid>
 </Window>

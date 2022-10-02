@@ -21,9 +21,10 @@ namespace BusinessLayer.Controllers
         {
             RestRequest request = new RestRequest("api/bankdata/", Method.Get);
             RestResponse response = access.restClient.Execute(request);
+            List<BankData> list = JsonConvert.DeserializeObject<List<BankData>>(response.Content);
             if (response.Content != null)
             {
-                return Ok(response.Content);
+                return Ok(list);
             }
             return BadRequest();
         }

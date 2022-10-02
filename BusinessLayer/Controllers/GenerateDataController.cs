@@ -28,13 +28,31 @@ namespace BusinessLayer.Controllers
                 bd.LastName = item.lastName;
                 bd.AccNum = (int)item.acctNo;
                 bd.Pin = (int)item.pin;
-                bd.Balance = (int)item.balance;
-                RestRequest request = new RestRequest("api/bankdata/", Method.Put);
+                bd.Balance = item.balance;
+                Console.WriteLine(">>>>>" + bd.AccNum);
+                RestRequest request = new RestRequest("api/bankdata/", Method.Post);
                 request.AddJsonBody(JsonConvert.SerializeObject(bd));
                 RestResponse response = access.restClient.Execute(request);
+                BankData returnData = JsonConvert.DeserializeObject<BankData>(response.Content);
+                if (returnData != null)
+                {
+                    Console.WriteLine("Data Successfully Inserted");
+                }
+                else
+                {
+                    Console.WriteLine("Error details:" + response.Content);
+                }
                 count++;
             }
-            return Ok();
+            if (count != 0)
+            {
+                return Json(new { Status = "Success"});
+            }
+            else
+            {
+                return Json(new { Status = "Failed"});
+            }
+            
         }
     }
 }
