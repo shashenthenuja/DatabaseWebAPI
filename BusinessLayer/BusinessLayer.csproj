@@ -200,6 +200,7 @@
     <Compile Include="Controllers\GetBankDataController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\SearchDataController.cs" />
+    <Compile Include="Controllers\UpdateDataController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

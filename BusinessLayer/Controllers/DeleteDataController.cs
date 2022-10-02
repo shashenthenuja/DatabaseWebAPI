@@ -14,12 +14,17 @@ namespace BusinessLayer.Controllers
     public class DeleteDataController : ApiController
     {
         Access access = new Access();
-        public IHttpActionResult AddData(int id)
+        public IHttpActionResult DeleteData(int id)
         {
             RestRequest request = new RestRequest("api/bankdata/{id}", Method.Delete);
             request.AddParameter("id", id);
-            RestResponse response = access.restClient.Execute(request);
-            return Ok(response);
+            RestResponse restResponse = access.restClient.Execute(request);
+            BankData result = JsonConvert.DeserializeObject<BankData>(restResponse.Content);
+            if (result != null)
+            {
+                return Json(result);
+            }
+            return StatusCode(HttpStatusCode.NoContent);
         }
     }
 }

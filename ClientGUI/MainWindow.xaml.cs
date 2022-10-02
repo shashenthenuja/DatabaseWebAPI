@@ -162,6 +162,7 @@ namespace ClientGUI
                         BalanceBox.Text = balance.ToString("C");
                         AcctNoBox.Text = data.AccNum.ToString();
                         PinBox.Text = pin.ToString("D4");
+                        IndexNum.Text = data.Id.ToString();
                     }
                     else
                     {
@@ -214,7 +215,7 @@ namespace ClientGUI
                 {
                     accNo = Int32.Parse(AcctNoBox.Text);
                     pin = Int32.Parse(PinBox.Text);
-                    balance = Int32.Parse(PinBox.Text);
+                    balance = Int32.Parse(BalanceBox.Text);
                 }
                 catch (Exception)
                 {
@@ -243,8 +244,8 @@ namespace ClientGUI
                     RestRequest restRequest = new RestRequest("api/adddata", Method.Post);
                     restRequest.AddJsonBody(JsonConvert.SerializeObject(bankData));
                     RestResponse restResponse = client.Execute(restRequest);
-                    BankData returnStudent = JsonConvert.DeserializeObject<BankData>(restResponse.Content);
-                    if (returnStudent != null)
+                    BankData result = JsonConvert.DeserializeObject<BankData>(restResponse.Content);
+                    if (result != null)
                     {
                         TotalNum.Text = "Total Records : " + index.ToString();
                         MessageBox.Show("Data Successfully Inserted");
@@ -260,6 +261,112 @@ namespace ClientGUI
             {
                 MessageBox.Show("Please enter all data..");
             }
+        }
+
+        private void updateBtn_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog op;
+            if (!FNameBox.Text.Equals("") && !LNameBox.Text.Equals("") && !BalanceBox.Text.Equals("") && !AcctNoBox.Text.Equals("") && !PinBox.Text.Equals(""))
+            {
+                string fname = FNameBox.Text;
+                string lname = LNameBox.Text;
+                int accNo = 0;
+                int pin = 0;
+                int balance = 0;
+                int index = 0;
+                try
+                {
+                    index = Int32.Parse(IndexNum.Text);
+                    accNo = Int32.Parse(AcctNoBox.Text);
+                    pin = Int32.Parse(PinBox.Text);
+                    balance = Int32.Parse(BalanceBox.Text);
+
+                    op = new OpenFileDialog();
+                    op.Title = "Select a profile picture";
+                    op.Filter = "JPG Files (*.jpg)|*.jpg|JPEG Files (*.jpeg)|*.jpeg|PNG Files (*.png)|*.png|GIF Files (*.gif)|*.gif";
+                    if (op.ShowDialog() == true)
+                    {
+                        BankData bankData = new BankData();
+                        bankData.Id = index;
+                        bankData.FirstName = fname;
+                        bankData.LastName = lname;
+                        bankData.AccNum = accNo;
+                        bankData.Pin = pin;
+                        bankData.Balance = balance;
+                        bankData.Image = op.FileName;
+
+                        DisplaySearchData(bankData);
+                        RestRequest restRequest = new RestRequest("api/updatedata/?id=" + index, Method.Post);
+                        restRequest.AddJsonBody(JsonConvert.SerializeObject(bankData));
+                        client.Execute(restRequest);
+                        MessageBox.Show("Data Successfully Updated");
+                    }
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Enter valid data!");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please enter all data..");
+            }
+        }
+
+        private void generateBtn_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                RestRequest request = new RestRequest("api/getalldata");
+                RestResponse resp = client.Get(request);
+                List<BankData> list = JsonConvert.DeserializeObject<List<BankData>>(resp.Content);
+
+                int index = list.Count + 1;
+
+                RestRequest request2 = new RestRequest("api/generatedata/?index=" + index.ToString(), Method.Post);
+                RestResponse restResponse = client.Execute(request2);
+                var data = (JObject)JsonConvert.DeserializeObject(restResponse.Content, new JsonSerializerSettings() { DateParseHandling = DateParseHandling.None });
+                var status = (string)data["Status"];
+                if (status.Equals("Success"))
+                {
+                    MessageBox.Show("Generated 100 Records!");
+                    int total = list.Count + 100;
+                    TotalNum.Text = "Total Records : "  + total.ToString();
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Something Went Wrong!");
+            }
+        }
+
+        private void deleteBtn_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                int index = Int32.Parse(IndexNum.Text);
+                RestRequest restRequest = new RestRequest("api/deletedata/?id=" + index, Method.Delete);
+                RestResponse restResponse = client.Execute(restRequest);
+                BankData result = JsonConvert.DeserializeObject<BankData>(restResponse.Content);
+                if (result != null)
+                {
+                    RestRequest request = new RestRequest("api/getalldata");
+                    RestResponse resp = client.Get(request);
+                    List<BankData> list = JsonConvert.DeserializeObject<List<BankData>>(resp.Content);
+
+                    TotalNum.Text = "Total Records : " + list.Count;
+                    MessageBox.Show("Data Successfully Deleted");
+                }
+                else
+                {
+                    MessageBox.Show("Error details:" + restResponse.Content);
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Something Went Wrong!");
+            }
+
         }
 
         public string FactorString(string val)
