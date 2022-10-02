@@ -16,15 +16,14 @@ namespace BusinessLayer.Controllers
         Access access = new Access();
         public IHttpActionResult AddData(int id, BankData bankData)
         {
-            RestRequest request = new RestRequest("api/bankdata/{id}", Method.Put);
-            request.AddParameter("id", id);
+            RestRequest request = new RestRequest("api/bankdata/", Method.Post);
             request.AddJsonBody(JsonConvert.SerializeObject(bankData));
             RestResponse response = access.restClient.Execute(request);
             if (response.Content != null)
             {
                 return Ok(response.Content);
             }
-            return BadRequest();
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
     }

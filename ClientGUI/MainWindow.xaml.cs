@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.Models;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
@@ -43,8 +44,23 @@ namespace ClientGUI
             RestRequest request = new RestRequest("api/getalldata");
             numOfThings = client.Get(request);
             list = JsonConvert.DeserializeObject<List<BankData>>(numOfThings.Content);
-           
-            TotalNum.Text = "Total Records : " + list.Count.ToString();
+            if (list.Count == 0)
+            {
+                RestRequest request2 = new RestRequest("api/generatedata/{id}", Method.Get);
+                request2.AddParameter("id", 0);
+                RestResponse restResponse = client.Execute(request2);
+                var data = (JObject)JsonConvert.DeserializeObject(restResponse.Content, new JsonSerializerSettings() { DateParseHandling = DateParseHandling.None });
+                var status = (string)data["Status"];
+                if (status.Equals("Success"))
+                {
+                    MessageBox.Show("Generated 100 Records!");
+                    TotalNum.Text = "Total Records : 100";
+                }
+            }
+            else
+            {
+                TotalNum.Text = "Total Records : " + list.Count.ToString();
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -60,22 +76,11 @@ namespace ClientGUI
                 {
                     try
                     {
-                        RestRequest request = new RestRequest("api/getbankdata/" + index.ToString());
+                        RestRequest request = new RestRequest("api/getalldata");
                         RestResponse resp = client.Get(request);
-                        //dynamic obj = JObject.Parse(resp.Content);
-                        // string fname = JObject.Parse(resp.Content)["FirstName"].ToString();
-                        /*string lname = (string)obj.SelectToken("LastName");
-                        int accNo = (int)obj.SelectToken("AccNum");
-                        uint pin = (uint)obj.SelectToken("Pin");
-                        uint balance = (uint)obj.SelectToken("Balance");*/
-                        //And now, set the values in the GUI!
-                        //image.Source = new BitmapImage(new Uri(dataIntermed.image));
-                        //FNameBox.Text = fname;
-                        /*LNameBox.Text = lname;
-                        BalanceBox.Text = balance.ToString("C");
-                        AcctNoBox.Text = accNo.ToString();
-                        PinBox.Text = pin.ToString("D4");*/
-                        foreach (BankData item in list)
+                        List<BankData> data = JsonConvert.DeserializeObject<List<BankData>>(resp.Content);
+
+                        foreach (BankData item in data)
                         {
                             if (item.Id.Equals(index))
                             {
@@ -86,6 +91,7 @@ namespace ClientGUI
                                 BalanceBox.Text = balance.ToString("C");
                                 AcctNoBox.Text = item.AccNum.ToString();
                                 PinBox.Text = pin.ToString("D4");
+                                image.Source = new BitmapImage(new Uri(item.Image));
                                 break;
                             }
                         }
@@ -150,7 +156,7 @@ namespace ClientGUI
                     if (data.LastName != null)
                     {
                         //Set the values in the GUI!
-                        //image.Source = new BitmapImage(new Uri("./test.jpg"));
+                        image.Source = new BitmapImage(new Uri(data.Image));
                         uint pin = (uint)data.Pin;
                         uint balance = (uint)data.Balance;
                         FNameBox.Text = data.FirstName;
@@ -198,7 +204,53 @@ namespace ClientGUI
 
         private void insertBtn_Click(object sender, RoutedEventArgs e)
         {
+            OpenFileDialog op;
+            if (FNameBox.Text != null && LNameBox.Text != null && BalanceBox.Text != null && AcctNoBox.Text != null && PinBox.Text != null)
+            {
+                string fname = FNameBox.Text;
+                string lname = LNameBox.Text;
+                int accNo = Int32.Parse(AcctNoBox.Text);
+                int pin = Int32.Parse(PinBox.Text);
+                int balance = Int32.Parse(PinBox.Text);
 
+                op = new OpenFileDialog();
+                op.Title = "Select a profile picture";
+                op.Filter = "JPG Files (*.jpg)|*.jpg|JPEG Files (*.jpeg)|*.jpeg|PNG Files (*.png)|*.png|GIF Files (*.gif)|*.gif";
+                if (op.ShowDialog() == true)
+                {
+                    image.Source = new BitmapImage(new Uri(op.FileName));
+                    RestRequest request = new RestRequest("api/getalldata");
+                    RestResponse resp = client.Get(request);
+                    List<BankData> data = JsonConvert.DeserializeObject<List<BankData>>(resp.Content);
+                    int index = data.Count - 1;
+                    BankData bankData = new BankData();
+                    bankData.Id = index + 1;
+                    bankData.FirstName = fname;
+                    bankData.LastName = lname;
+                    bankData.AccNum = accNo;
+                    bankData.Pin = pin;
+                    bankData.Balance = balance;
+                    bankData.Image = op.FileName;
+                   
+                    RestRequest restRequest = new RestRequest("api/adddata", Method.Post);
+                    restRequest.AddJsonBody(JsonConvert.SerializeObject(bankData));
+                    RestResponse restResponse = client.Execute(restRequest);
+                    BankData returnStudent = JsonConvert.DeserializeObject<BankData>(restResponse.Content);
+                    if (returnStudent != null)
+                    {
+                        MessageBox.Show("Data Successfully Inserted");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Error details:" + restResponse.Content);
+                    }
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("Please enter all data..");
+            }
         }
 
         public string FactorString(string val)

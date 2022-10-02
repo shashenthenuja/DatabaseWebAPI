@@ -16,10 +16,10 @@ namespace BusinessLayer.Controllers
     {
         Access access = new Access();
         DatabaseClass data = new DatabaseClass();
-        public IHttpActionResult GenerateData()
+        public IHttpActionResult GenerateData(int index)
         {
             List<DataStruct> list = data.getList();
-            int count = 0;
+            int count = index;
             foreach (DataStruct item in list)
             {
                 BankData bd = new BankData();
@@ -29,6 +29,7 @@ namespace BusinessLayer.Controllers
                 bd.AccNum = (int)item.acctNo;
                 bd.Pin = (int)item.pin;
                 bd.Balance = item.balance;
+                bd.Image = item.image;
                 Console.WriteLine(">>>>>" + bd.AccNum);
                 RestRequest request = new RestRequest("api/bankdata/", Method.Post);
                 request.AddJsonBody(JsonConvert.SerializeObject(bd));

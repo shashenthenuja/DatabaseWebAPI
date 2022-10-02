@@ -15,6 +15,7 @@
           <Property Name="AccNum" Type="int" Nullable="false" />
           <Property Name="Pin" Type="int" Nullable="false" />
           <Property Name="Balance" Type="int" />
+          <Property Name="Image" Type="varchar" MaxLength="255" />
         </EntityType>
         <EntityContainer Name="bankModelStoreContainer">
           <EntitySet Name="BankData" EntityType="Self.BankData" Schema="dbo" store:Type="Tables" />
@@ -34,8 +35,9 @@
           <Property Name="AccNum" Type="Int32" Nullable="false" />
           <Property Name="Pin" Type="Int32" Nullable="false" />
           <Property Name="Balance" Type="Int32" />
+          <Property Name="Image" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
         </EntityType>
-        <EntityContainer Name="bankEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="bankEntities1" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="BankDatas" EntityType="Self.BankData" />
         </EntityContainer>
       </Schema>
@@ -43,7 +45,7 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="bankModelStoreContainer" CdmEntityContainer="bankEntities">
+        <EntityContainerMapping StorageEntityContainer="bankModelStoreContainer" CdmEntityContainer="bankEntities1">
           <EntitySetMapping Name="BankDatas">
             <EntityTypeMapping TypeName="bankModel.BankData">
               <MappingFragment StoreEntitySet="BankData">
@@ -53,6 +55,7 @@
                 <ScalarProperty Name="AccNum" ColumnName="AccNum" />
                 <ScalarProperty Name="Pin" ColumnName="Pin" />
                 <ScalarProperty Name="Balance" ColumnName="Balance" />
+                <ScalarProperty Name="Image" ColumnName="Image" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

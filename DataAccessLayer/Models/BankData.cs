@@ -20,5 +20,6 @@ namespace DataAccessLayer.Models
         public int AccNum { get; set; }
         public int Pin { get; set; }
         public Nullable<int> Balance { get; set; }
+        public string Image { get; set; }
     }
 }

@@ -14,7 +14,7 @@ namespace DataAccessLayer.Controllers
 {
     public class BankDataController : ApiController
     {
-        private bankEntities db = new bankEntities();
+        private bankEntities1 db = new bankEntities1();
 
         // GET: api/BankData
         public List<BankData> GetBankDatas()

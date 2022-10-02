@@ -13,10 +13,10 @@ namespace DataAccessLayer.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class bankEntities : DbContext
+    public partial class bankEntities1 : DbContext
     {
-        public bankEntities()
-            : base("name=bankEntities")
+        public bankEntities1()
+            : base("name=bankEntities1")
         {
         }
     
